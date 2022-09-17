@@ -1,7 +1,7 @@
 {
     "name":"WebSerial",
     "description":"Web Serial Library for ESP32",
-    "keywords":"async,telnet",
+    "keywords":"serial,web",
     "authors": {
       "name": "Boris Jaeger",
       "maintainer": true
@@ -15,7 +15,7 @@
     "frameworks": "arduino",
     "platforms": "espressif32",
     "dependencies" : {
-        "me-no-dev/AsyncTCP": "*"
+        "me-no-dev/ESP Async WebServer": "*"
     },
     "examples" : [
       {
