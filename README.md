@@ -2,7 +2,7 @@
 
 ## Installation
 
-### platformio.ini
+`platformio.ini`
 ```
 lib_deps =
   https://github.com/sivar2311/WebSerial
@@ -10,4 +10,6 @@ lib_deps =
 
 ## Usage
 
-See [basic example](examples/basic/main.cpp)
+See examples:
+- [basic](examples/basic/main.cpp)
+- [bidirectional](examples/bidirectional/main.cpp)
