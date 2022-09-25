@@ -1,82 +1,38 @@
 #pragma once
 
 const char* webPage = R"***(
-<html>
+<html lang="en">
+
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebSerial</title>
-
-    <style>
-        body {
-            font-family: 'verdana';
-        }
-
-        .wrapper {
-            width: 100%;
-            max-width: 960px;
-            margin: 0 auto;
-        }
-
-        .header {
-            height: 40px;
-        }
-
-        .main {
-            height: calc(100% - 88px);
-        }
-
-        .footer {
-            height: 48px;
-            width: 100%;
-            max-width: 960px;
-            position: fixed;
-            bottom:0;
-        }
-
-        textarea {
-            background-color: lightgray;
-            font-family: 'Courier New', monospace;
-            color: #222222;
-            width: 100%;
-            max-width: 960px;
-            height: 100%;
-
-        }
-    </style>
 </head>
 
 <body>
-    <form onsubmit="return false">
-        <div class="wrapper">
-            <div class="header">
-                <h1>WebSerial</h1>
-            </div>
-            <div class="main">
-                <textarea readonly id="messages"></textarea>
-            </div>
-            <div class="footer">
-                <div>
-                    <input type="checkbox" id="scroll" value="scroll" checked="true"><label for="checkbox">auto
-                        scroll</label>
-                    <input type="checkbox" id="timestamp" value="timestamp"><label for="timestamp">timestamp</label>
-                    <button type="button" onclick="clear_lines()">clear</button>
-                </div>
-                <div>
-                    <input type="text" id="text"><button type="button" onclick="send_line()" autofocus>send</button>
-                </div>
-            </div>
+    <div id="content">
+        <div id="header">
+            <h1>WebSerial</h1>
         </div>
-    </form>
+        <div id="opt">
+            <input type="checkbox" id="scroll" value="scroll" checked="true"><label for="checkbox">auto scroll</label>
+            <input type="checkbox" id="timestamp" value="timestamp"><label for="timestamp">timestamp</label>
+        </div>
+        <input type="text" id="st" placeholder="type something and press send button"></input>
+        <button id="sb" onclick="send_line()">send</button>
+        <button id="cb" onclick="clear_lines()">clear</button>
+        <textarea readonly="true" id="o" placeholder="nothing received yet"></textarea>
+    </div>
 </body>
+
 <script>
     let scroll = document.getElementById('scroll');
     let timestamp = document.getElementById('timestamp');
-    let messages = document.getElementById('messages');
-    let send_text = document.getElementById('text');
+    let output = document.getElementById('o');
+    let send_text = document.getElementById('st');
 
-    text.addEventListener("keypress", event => {
+    send_text.addEventListener("keypress", event => {
         if (event.key === "Enter") send_line();
     });
 
@@ -92,20 +48,135 @@ const char* webPage = R"***(
 
         if (timestamp.checked) {
             const current_time = new Date(Date.now()).toLocaleTimeString();
-            next_line = `[${current_time}]: ` + next_line;
+            next_line = `[${current_time}] ` + next_line;
         }
-        messages.value = messages.value + next_line;
+        output.value += next_line;
 
-        if (scroll.checked) messages.scrollTop = messages.scrollHeight;
+        if (scroll.checked) output.scrollTop = output.scrollHeight;
     }
 
     var clear_lines = function () {
-        messages.value = "";
+        output.value = "";
     }
 
     var send_line = function () {
-        socket.send(text.value);
-        text.value = "";
+        socket.send(send_text.value);
+        send_text.value = "";
     }
 </script>
-</html>)***";
+<style>
+    body {
+        color: gray;
+        font-family: Verdana;
+        text-align: center;
+    }
+
+    #content {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: minmax(50px, auto);
+        grid-gap: 10px;
+        max-width: 960px;
+        margin: 0 auto;
+        position: relative;
+
+        grid-template-areas:
+            "st st"
+            "sb cb"
+            "o o"
+            "o o"
+            "o o"
+            "o o"
+            "o o"
+            "opt opt"
+            "h h";
+    }
+
+
+    @media screen and (min-width: 760px) {
+
+        #content {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-auto-rows: minmax(50px, auto);
+            grid-gap: 10px;
+            max-width: 960px;
+            margin: 0 auto;
+            position: relative;
+
+            grid-template-areas:
+                "h h h h h h h h"
+                "opt opt opt opt opt opt opt opt"
+                "st st st st st st sb cb"
+                "o o o o o o o o"
+                "o o o o o o o o"
+                "o o o o o o o o"
+                "o o o o o o o o"
+                "o o o o o o o o"
+                "o o o o o o o o";
+        }
+    }
+
+    #content>* {
+        padding: 0px;
+        border-radius: 1em;
+        outline: none;
+        border: 0px;
+    }
+
+    #header {
+        grid-area: h;
+        text-align: center;
+    }
+
+    #opt {
+        grid-area: opt;
+        text-align: center;
+    }
+    
+    input[type=checkbox] {
+        transform: scale(1.5);
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+    #st {
+        grid-area: st;
+        background: #eee;
+        padding: 10px;
+    }
+
+    #st:hover,
+    #st:focus {
+        background: #ddd;
+    }
+
+    #sb {
+        grid-area: sb;
+        background-color: rgba(144, 238, 144, 0.5);
+    }
+
+    #sb:hover,
+    #sb:focus {
+        background-color: rgba(144, 238, 144, 1);
+    }
+
+    #cb {
+        grid-area: cb;
+        background-color: rgba(240, 128, 128, 0.5);
+    }
+
+    #cb:hover {
+        background-color: rgba(240, 128, 128, 1);
+    }
+
+    #o {
+        grid-area: o;
+        padding: 10px;
+        background: #eee;
+        resize: vertical;
+    }
+</style>
+
+</html>
+)***";
