@@ -16,7 +16,8 @@ const char* webPage = R"***(
             <h1>WebSerial</h1>
         </div>
         <div id="opt">
-            <input type="checkbox" id="scroll" value="scroll" checked="true"><label for="checkbox">auto scroll</label>
+            <input type="checkbox" id="scroll" value="scroll" checked="true"><label for="scroll">auto scroll</label>
+            <input type="checkbox" id="pause" value="pause"><label for="pause">pause</label>
             <input type="checkbox" id="timestamp" value="timestamp"><label for="timestamp">timestamp</label>
         </div>
         <input type="text" id="st" placeholder="type something and press send button"></input>
@@ -29,19 +30,22 @@ const char* webPage = R"***(
 <script>
     let scroll = document.getElementById('scroll');
     let timestamp = document.getElementById('timestamp');
+    let pause = document.getElementById('pause');
     let output = document.getElementById('o');
     let send_text = document.getElementById('st');
-
+    
     send_text.addEventListener("keypress", event => {
         if (event.key === "Enter") send_line();
     });
-
+    
     const port = 80;
     const url = "/webserialws";
-
-    const ws_url = `ws://${window.location.hostname}:${window.location.port}/webserialws`;
-
+    
+    const ws_url = `ws://192.168.2.123/webserialws`;
+    // const ws_url = `ws://${window.location.hostname}:${window.location.port}/webserialws`;
+    
     socket = new WebSocket(ws_url);
+    let pause_buffer = "";
 
     socket.onmessage = (event) => {
         var next_line = event.data;
@@ -50,9 +54,19 @@ const char* webPage = R"***(
             const current_time = new Date(Date.now()).toLocaleTimeString();
             next_line = `[${current_time}] ` + next_line;
         }
-        output.value += next_line;
 
-        if (scroll.checked) output.scrollTop = output.scrollHeight;
+        if (pause.checked) {
+            pause_buffer += next_line;
+        } else {
+            if (pause_buffer == "") {
+                output.value += next_line;
+            } else {
+                output.value += pause_buffer + next_line;
+                pause_buffer = "";
+            }
+        }
+        
+        if (scroll.checked && !pause.checked) output.scrollTop = output.scrollHeight;
     }
 
     var clear_lines = function () {
@@ -133,11 +147,23 @@ const char* webPage = R"***(
         grid-area: opt;
         text-align: center;
     }
-    
+
+    button {
+        cursor: pointer;
+    }
+
     input[type=checkbox] {
-        transform: scale(1.5);
         margin-right: 10px;
         margin-left: 10px;
+        transform: scale(1.5);
+    }
+
+    input[type=checkbox]+label {
+        cursor: pointer;
+    }
+
+    #pause:checked {
+        content: '=';
     }
 
     #st {
@@ -156,8 +182,7 @@ const char* webPage = R"***(
         background-color: rgba(144, 238, 144, 0.5);
     }
 
-    #sb:hover,
-    #sb:focus {
+    #sb:hover {
         background-color: rgba(144, 238, 144, 1);
     }
 
