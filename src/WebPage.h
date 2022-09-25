@@ -41,8 +41,7 @@ const char* webPage = R"***(
     const port = 80;
     const url = "/webserialws";
     
-    const ws_url = `ws://192.168.2.123/webserialws`;
-    // const ws_url = `ws://${window.location.hostname}:${window.location.port}/webserialws`;
+    const ws_url = `ws://${window.location.hostname}:${window.location.port}/webserialws`;
     
     socket = new WebSocket(ws_url);
     let pause_buffer = "";
