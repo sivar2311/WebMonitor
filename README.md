@@ -1,4 +1,11 @@
 # WebSerial for ESP32
+## Preview
+![image](doc/image.png)
+
+## Features
+- auto scroll
+- pause
+- timestamp
 
 ## Installation
 
