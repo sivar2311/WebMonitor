@@ -1,6 +1,7 @@
 #pragma once
 
 const char* webPage = R"***(
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -11,40 +12,175 @@ const char* webPage = R"***(
 </head>
 
 <body>
-    <div id="content">
+    <div id="page">
         <div id="header">
             <h1>WebSerial</h1>
         </div>
-        <div id="opt">
-            <input type="checkbox" id="scroll" value="scroll" checked="true"><label for="scroll">auto scroll</label>
-            <input type="checkbox" id="pause" value="pause"><label for="pause">pause</label>
-            <input type="checkbox" id="timestamp" value="timestamp"><label for="timestamp">timestamp</label>
+        <div id="app">
+            <input type="text" id="input"></input>
+            <button id="send" onclick="send_input()">send</button>
+            <button id="clear" onclick="clear_output()">clear</button>
+            <textarea id="output" readonly="true"></textarea>
+            <div id="option"><input type="checkbox" id="pause" onclick="pause_output()"><label for="pause">pause</label> </div>
+            <div id="option"><input type="checkbox" id="timestamp"><label for="timestamp">timestamp</label></div>
         </div>
-        <input type="text" id="st" placeholder="type something and press send button"></input>
-        <button id="sb" onclick="send_line()">send</button>
-        <button id="cb" onclick="clear_lines()">clear</button>
-        <textarea readonly="true" id="o" placeholder="nothing received yet"></textarea>
-    </div>
+        <div id="footer"><a href="https://github.com/sivar2311/WebSerial" target="_blank">Visit WebSerial at <b>GitHub</b></a></div>
+        </page>
 </body>
+<style>
+    body {
+        color: gray;
+        font-family: Verdana;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    input:focus,
+    textarea:focus,
+    button:focus {
+        outline: none;
+    }
+
+    button:hover,
+    div#option>*:hover {
+        cursor: pointer;
+    }
+
+    label {
+        margin-left: 0.5em;
+    }
+
+    a {
+        text-decoration: none;
+        color: gray;
+    }
+
+
+    #page {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-auto-rows: minmax(0px, auto);
+        grid-gap: 1em;
+        margin: 0 auto;
+        position: relative;
+        max-width: 960px;
+        min-width: 300px;
+    }
+
+    #app {
+        background-color: #eee;
+        border-radius: 1em;
+        padding: 1em;
+        box-shadow: 0 0 1em;
+        gap: 1em;
+
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        grid-auto-rows: minmax(0px, auto);
+    }
+
+    #app>* {
+        border-radius: 1em;
+        padding: 1em;
+        border: none;
+    }
+
+    #input {
+        grid-column: span 8;
+        background-color: #fff;
+    }
+
+    input[type=checkbox] {
+        margin-right: 10px;
+        margin-left: 10px;
+        transform: scale(2);
+
+    }
+
+    button {
+        grid-column: span 2;
+    }
+
+    #send {
+        background-color: rgba(144, 238, 144, 0.5);
+    }
+
+    #send:hover {
+        background-color: rgba(144, 238, 144, 1);
+    }
+
+    #clear {
+        background-color: rgba(240, 128, 128, 0.5);
+    }
+
+    #clear:hover {
+        background-color: rgba(240, 128, 128, 1);
+    }
+
+    #output {
+        grid-column: span 12;
+        height: 20em;
+        resize: vertical;
+    }
+
+    #option {
+        grid-column: span 6;
+        padding: 0px;
+    }
+
+    @media screen and (max-width:720px) {
+
+        #send,
+        #clear {
+            grid-column: span 6;
+        }
+
+        #input {
+            grid-column: span 12;
+        }
+
+        #header {
+            grid-row: 2/3;
+        }
+    }
+
+    @media screen and (max-width:420px) {
+        #option {
+            grid-column: span 12;
+            justify-self: start;
+        }
+    }
+
+    @media screen and (max-height: 500px) {
+        #output {
+            height: 10em;
+        }
+
+        #header {
+            display: none;
+        }
+
+    }
+</style>
 
 <script>
-    let scroll = document.getElementById('scroll');
-    let timestamp = document.getElementById('timestamp');
-    let pause = document.getElementById('pause');
-    let output = document.getElementById('o');
-    let send_text = document.getElementById('st');
-    
-    send_text.addEventListener("keypress", event => {
-        if (event.key === "Enter") send_line();
-    });
-    
     const port = 80;
+
     const url = "/webserialws";
-    
     const ws_url = `ws://${window.location.hostname}:${window.location.port}/webserialws`;
-    
-    socket = new WebSocket(ws_url);
+
+    let input = document.getElementById('input');
+    let output = document.getElementById('output');
+    let pause = document.getElementById('pause');
+    let timestamp = document.getElementById('timestamp');
+
     let pause_buffer = "";
+
+    socket = new WebSocket(ws_url);
+
+    input.addEventListener("keypress", event => {
+        if (event.key === "Enter") send_input();
+    });
 
     socket.onmessage = (event) => {
         var next_line = event.data;
@@ -57,150 +193,30 @@ const char* webPage = R"***(
         if (pause.checked) {
             pause_buffer += next_line;
         } else {
-            if (pause_buffer == "") {
-                output.value += next_line;
-            } else {
-                output.value += pause_buffer + next_line;
-                pause_buffer = "";
-            }
+            output.value += next_line;
         }
-        
-        if (scroll.checked && !pause.checked) output.scrollTop = output.scrollHeight;
+
+        if (!pause.checked) output.scrollTop = output.scrollHeight;
     }
 
-    var clear_lines = function () {
+    function clear_output() {
         output.value = "";
     }
 
-    var send_line = function () {
-        socket.send(send_text.value);
-        send_text.value = "";
-    }
-</script>
-<style>
-    body {
-        color: gray;
-        font-family: Verdana;
-        text-align: center;
+    function send_input() {
+        socket.send(input.value);
+        input.value = "";
+        input.focus();
     }
 
-    #content {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        grid-auto-rows: minmax(50px, auto);
-        grid-gap: 10px;
-        max-width: 960px;
-        margin: 0 auto;
-        position: relative;
-
-        grid-template-areas:
-            "st st"
-            "sb cb"
-            "o o"
-            "o o"
-            "o o"
-            "o o"
-            "o o"
-            "opt opt"
-            "h h";
-    }
-
-
-    @media screen and (min-width: 760px) {
-
-        #content {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-auto-rows: minmax(50px, auto);
-            grid-gap: 10px;
-            max-width: 960px;
-            margin: 0 auto;
-            position: relative;
-
-            grid-template-areas:
-                "h h h h h h h h"
-                "opt opt opt opt opt opt opt opt"
-                "st st st st st st sb cb"
-                "o o o o o o o o"
-                "o o o o o o o o"
-                "o o o o o o o o"
-                "o o o o o o o o"
-                "o o o o o o o o"
-                "o o o o o o o o";
+    function pause_output() {
+        if (!pause.checked && pause_buffer != "") {
+            output.value += pause_buffer;
+            pause_buffer = "";
+            output.scrollTop = output.scrollHeight;
         }
     }
-
-    #content>* {
-        padding: 0px;
-        border-radius: 1em;
-        outline: none;
-        border: 0px;
-    }
-
-    #header {
-        grid-area: h;
-        text-align: center;
-    }
-
-    #opt {
-        grid-area: opt;
-        text-align: center;
-    }
-
-    button {
-        cursor: pointer;
-    }
-
-    input[type=checkbox] {
-        margin-right: 10px;
-        margin-left: 10px;
-        transform: scale(1.5);
-    }
-
-    input[type=checkbox]+label {
-        cursor: pointer;
-    }
-
-    #pause:checked {
-        content: '=';
-    }
-
-    #st {
-        grid-area: st;
-        background: #eee;
-        padding: 10px;
-    }
-
-    #st:hover,
-    #st:focus {
-        background: #ddd;
-    }
-
-    #sb {
-        grid-area: sb;
-        background-color: rgba(144, 238, 144, 0.5);
-    }
-
-    #sb:hover {
-        background-color: rgba(144, 238, 144, 1);
-    }
-
-    #cb {
-        grid-area: cb;
-        background-color: rgba(240, 128, 128, 0.5);
-    }
-
-    #cb:hover {
-        background-color: rgba(240, 128, 128, 1);
-    }
-
-    #o {
-        grid-area: o;
-        padding: 10px;
-        background: #eee;
-        resize: vertical;
-    }
-</style>
+</script>
 
 </html>
 )***";
