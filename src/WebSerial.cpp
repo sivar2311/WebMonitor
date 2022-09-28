@@ -22,17 +22,17 @@ void WebSerialClass::begin(AsyncWebServer* server, const char* url) {
     _server->addHandler(_ws);
 }
 
-void  WebSerialClass::onMessage(MessageHandler msg_handler) {
+void WebSerialClass::onMessage(MessageHandler msg_handler) {
     _msg_handler = msg_handler;
 }
 
 void WebSerialClass::handleWebPage(AsyncWebServerRequest* request) {
-    request->send(200, "text/html", (const char*) webPage);
+    request->send(200, "text/html", (const char*)webPage);
 }
 
 void WebSerialClass::handleWSEvent(AsyncWebSocket* server, AsyncWebSocketClient* client, AwsEventType type, void* arg, uint8_t* data, size_t len) {
     if (type == WS_EVT_DATA && data && len && _msg_handler) {
-        char buf[len+1];
+        char buf[len + 1];
         buf[len] = 0;
         memcpy(buf, data, len);
         _msg_handler(buf);
