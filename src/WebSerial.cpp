@@ -50,4 +50,7 @@ size_t WebSerialClass::write(const uint8_t* buffer, size_t len) {
     return len;
 }
 
+int WebSerialClass::availableForWrite() {
+    return _ws->availableForWriteAll();
+}
 WebSerialClass WebSerial;

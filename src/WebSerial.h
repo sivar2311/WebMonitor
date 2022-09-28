@@ -14,6 +14,7 @@ class WebSerialClass : public Print {
 
     virtual size_t write(uint8_t data) override;
     virtual size_t write(const uint8_t* buffer, size_t len) override;
+    virtual int    availableForWrite() override;
 
   protected:
     void handleWebPage(AsyncWebServerRequest* request);
