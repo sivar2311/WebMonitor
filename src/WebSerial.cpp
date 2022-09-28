@@ -1,5 +1,6 @@
 #include "WebSerial.h"
 
+#include "StreamString.h"
 #include "WebPage.h"
 
 WebSerialClass::WebSerialClass()
@@ -53,4 +54,87 @@ size_t WebSerialClass::write(const uint8_t* buffer, size_t len) {
 int WebSerialClass::availableForWrite() {
     return _ws->availableForWriteAll();
 }
+
+size_t WebSerialClass::println(const __FlashStringHelper* s) {
+    StreamString buffer;
+    buffer.println(s);
+    return write((uint8_t*)buffer.c_str(), buffer.length());
+}
+
+size_t WebSerialClass::println(const String& s) {
+    StreamString buffer;
+    buffer.println(s);
+    return write((uint8_t*)buffer.c_str(), buffer.length());
+}
+
+size_t WebSerialClass::println(const char c[]) {
+    StreamString buffer;
+    buffer.println(c);
+    return write((uint8_t*)buffer.c_str(), buffer.length());
+}
+
+size_t WebSerialClass::println(char c) {
+    StreamString buffer;
+    buffer.println(c);
+    return write((uint8_t*)buffer.c_str(), buffer.length());
+}
+
+size_t WebSerialClass::println(unsigned char c, int base) {
+    StreamString buffer;
+    buffer.println(c, base);
+    return write((uint8_t*)buffer.c_str(), buffer.length());
+}
+
+size_t WebSerialClass::println(int i, int base) {
+    StreamString buffer;
+    buffer.println(i, base);
+    return write((uint8_t*)buffer.c_str(), buffer.length());
+}
+
+size_t WebSerialClass::println(unsigned int i, int base) {
+    StreamString buffer;
+    buffer.println(i, base);
+    return write((uint8_t*)buffer.c_str(), buffer.length());
+}
+
+size_t WebSerialClass::println(long l, int base) {
+    StreamString buffer;
+    buffer.println(l, base);
+    return write((uint8_t*)buffer.c_str(), buffer.length());
+}
+
+size_t WebSerialClass::println(unsigned long l, int base) {
+    StreamString buffer;
+    buffer.println(l, base);
+    return write((uint8_t*)buffer.c_str(), buffer.length());
+}
+
+size_t WebSerialClass::println(long long l, int base) {
+    StreamString buffer;
+    buffer.println(l, base);
+    return write((uint8_t*)buffer.c_str(), buffer.length());
+}
+size_t WebSerialClass::println(unsigned long long l, int base) {
+    StreamString buffer;
+    buffer.println(l, base);
+    return write((uint8_t*)buffer.c_str(), buffer.length());
+}
+size_t WebSerialClass::println(double d, int digits) {
+    StreamString buffer;
+    buffer.println(d, digits);
+    return write((uint8_t*)buffer.c_str(), buffer.length());
+}
+
+size_t WebSerialClass::println(const Printable& x) {
+    StreamString buffer;
+    x.printTo(buffer);
+    return write((uint8_t*)buffer.c_str(), buffer.length());
+}
+
+size_t WebSerialClass::println(struct tm* timeinfo, const char* format) {
+    StreamString buffer;
+    buffer.println(timeinfo, format);
+    return write((uint8_t*)buffer.c_str(), buffer.length());
+}
+
 WebSerialClass WebSerial;
