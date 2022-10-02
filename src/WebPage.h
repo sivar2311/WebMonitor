@@ -164,8 +164,6 @@ const char* webPage = R"***(
 </style>
 
 <script>
-    const port = 80;
-
     const url = "/webserialws";
     const ws_url = `ws://${window.location.hostname}:${window.location.port}/webserialws`;
 
