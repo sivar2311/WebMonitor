@@ -183,6 +183,8 @@ const char* webPage = R"***(
     });
 
     socket.onmessage = (event) => {
+        var selection = saveSelection();
+
         var next_line = event.data;
 
         if (timestamp.checked) {
@@ -196,7 +198,7 @@ const char* webPage = R"***(
             output.value += next_line;
         }
 
-        if (!pause.checked) output.scrollTop = output.scrollHeight;
+        restoreSelection(selection);
     }
 
     function clear_output() {
@@ -215,6 +217,14 @@ const char* webPage = R"***(
             pause_buffer = "";
             output.scrollTop = output.scrollHeight;
         }
+    }
+    function saveSelection() {
+        return { start: output.selectionStart, end: output.selectionEnd };
+    }
+
+    function restoreSelection(selection) {
+        output.selectionStart = selection.start;
+        output.selectionEnd = selection.end;
     }
 </script>
 
