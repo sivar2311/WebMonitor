@@ -9,6 +9,7 @@ class WebSerialClass : public Print {
 
   public:
     WebSerialClass();
+    void begin(int port = 80, const char* url = "/webserial");
     void begin(AsyncWebServer* server, const char* url = "/webserial");
     void onMessage(MessageHandler msg_handler);
 

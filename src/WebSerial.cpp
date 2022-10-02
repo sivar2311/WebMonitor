@@ -7,6 +7,12 @@ WebSerialClass::WebSerialClass()
     : _server(nullptr)
     , _ws(nullptr) {}
 
+void WebSerialClass::begin(int port, const char* url) {
+    AsyncWebServer* server = new AsyncWebServer(port);
+    server->begin();
+    begin(server, url);
+}
+
 void WebSerialClass::begin(AsyncWebServer* server, const char* url) {
     if (_server) return;
     _server = server;
