@@ -186,11 +186,7 @@ const char* webPage = R"***(
         var selection = saveSelection();
 
         var next_line = event.data;
-
-        if (timestamp.checked) {
-            const current_time = new Date(Date.now()).toLocaleTimeString();
-            next_line = `[${current_time}] ` + next_line;
-        }
+        if (timestamp.checked) next_line = addTimestamp(next_line);
 
         if (pause.checked) {
             pause_buffer += next_line;
@@ -219,6 +215,12 @@ const char* webPage = R"***(
             output.scrollTop = output.scrollHeight;
         }
     }
+
+    function addTimestamp(line) {
+        const current_time = new Date(Date.now());
+        return `${current_time.toLocaleTimeString()}.${String(current_time.getMilliseconds()).padStart(3, '0')} -> ` + line;
+    }
+
     function saveSelection() {
         return { start: output.selectionStart, end: output.selectionEnd };
     }
