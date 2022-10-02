@@ -196,6 +196,7 @@ const char* webPage = R"***(
             pause_buffer += next_line;
         } else {
             output.value += next_line;
+            output.scrollTop = output.scrollHeight;
         }
 
         restoreSelection(selection);
