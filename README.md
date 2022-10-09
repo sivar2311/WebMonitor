@@ -1,4 +1,4 @@
-# WebMonitor for ESP32
+# WebMonitor for ESP8266 & ESP32
 
 # Features
 - Easy to use (same use as `Serial`)
