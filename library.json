@@ -1,6 +1,6 @@
 {
-    "name":"WebSerial",
-    "description":"Web Serial Library for ESP32",
+    "name":"WebMonitor",
+    "description":"Web Monitor Library for ESP8266 & ESP32",
     "keywords":"serial,web",
     "authors": {
       "name": "Boris Jaeger",
@@ -8,12 +8,12 @@
     },
     "repository": {
       "type": "git",
-      "url" : "https:://github.com/sivar2311/WebSerial.git"
+      "url" : "https:://github.com/sivar2311/WebMonitor.git"
     },
-    "version": "0.2.0",
+    "version": "0.3.0",
     "license": "LGPL-3.0",
     "frameworks": "arduino",
-    "platforms": "espressif32",
+    "platforms": ["espressif32, espressif8266"],
     "dependencies" : [
       {
         "owner": "me-no-dev",
@@ -30,6 +30,11 @@
       {
         "name" : "basic",
         "base" : "examples/basic",
+        "files" : ["main.cpp"]
+      },
+      {
+        "name" : "advanced",
+        "base" : "examples/advanced",
         "files" : ["main.cpp"]
       },
       {
