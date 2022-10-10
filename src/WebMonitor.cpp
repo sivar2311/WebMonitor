@@ -4,6 +4,25 @@
 
 namespace WebMon {
 
+WebMonitorClient::WebMonitorClient(AsyncWebSocketClient* client)
+    : _client(client) {}
+
+size_t WebMonitorClient::write(uint8_t data) {
+    if (!_client) return 0;
+    _client->text(&data, 1);
+    return 1;
+}
+
+size_t WebMonitorClient::write(const uint8_t* buffer, size_t len) {
+    if (!_client) return 0;
+    _client->text((const char*)buffer, len);
+    return len;
+}
+
+int WebMonitorClient::availableForWrite() {
+    return _client->canSend();
+}
+
 WebMonitorClass::WebMonitorClass()
     : _server(nullptr)
     , _ws(nullptr) {}
@@ -33,18 +52,27 @@ void WebMonitorClass::onMessage(MessageHandler msg_handler) {
     _msg_handler = msg_handler;
 }
 
+void WebMonitorClass::onConnect(ConnectHandler con_handler) {
+    _con_handler = con_handler;
+}
+
 void WebMonitorClass::handleWebPage(AsyncWebServerRequest* request) {
     AsyncWebServerResponse* response = request->beginResponse_P(200, "text/html", webPage);
     request->send(response);
 }
 
 void WebMonitorClass::handleWSEvent(AsyncWebSocket* server, AsyncWebSocketClient* client, AwsEventType type, void* arg, uint8_t* data, size_t len) {
+    WebMonitorClient wm_client(client);
+
     if (type == WS_EVT_DATA && data && len && _msg_handler) {
         char buf[len + 1];
         buf[len] = 0;
         memcpy(buf, data, len);
-        _msg_handler(buf);
+        String message(buf);
+        _msg_handler(message, wm_client);
     }
+
+    if (type == WS_EVT_CONNECT && _con_handler) _con_handler(wm_client);
 }
 
 size_t WebMonitorClass::write(uint8_t data) {
