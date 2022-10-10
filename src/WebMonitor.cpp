@@ -34,7 +34,8 @@ void WebMonitorClass::onMessage(MessageHandler msg_handler) {
 }
 
 void WebMonitorClass::handleWebPage(AsyncWebServerRequest* request) {
-    request->send(200, "text/html", (const char*)webPage);
+    AsyncWebServerResponse* response = request->beginResponse_P(200, "text/html", webPage);
+    request->send(response);
 }
 
 void WebMonitorClass::handleWSEvent(AsyncWebSocket* server, AsyncWebSocketClient* client, AwsEventType type, void* arg, uint8_t* data, size_t len) {
@@ -62,6 +63,6 @@ int WebMonitorClass::availableForWrite() {
     return _ws->availableForWriteAll();
 }
 
-} // namespace
+}  // namespace WebMon
 
 WebMon::WebMonitorClass WebMonitor;
