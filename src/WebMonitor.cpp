@@ -4,25 +4,6 @@
 
 namespace WebMon {
 
-WebMonitorClient::WebMonitorClient(AsyncWebSocketClient* client)
-    : _client(client) {}
-
-size_t WebMonitorClient::write(uint8_t data) {
-    if (!_client) return 0;
-    _client->text(&data, 1);
-    return 1;
-}
-
-size_t WebMonitorClient::write(const uint8_t* buffer, size_t len) {
-    if (!_client) return 0;
-    _client->text((const char*)buffer, len);
-    return len;
-}
-
-int WebMonitorClient::availableForWrite() {
-    return _client->canSend();
-}
-
 WebMonitorClass::WebMonitorClass()
     : _server(nullptr)
     , _ws(nullptr) {}
@@ -73,6 +54,8 @@ void WebMonitorClass::handleWSEvent(AsyncWebSocket* server, AsyncWebSocketClient
     }
 
     if (type == WS_EVT_CONNECT && _con_handler) _con_handler(wm_client);
+    
+    wm_client.flush();
 }
 
 size_t WebMonitorClass::write(uint8_t data) {

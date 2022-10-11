@@ -4,26 +4,11 @@
 #include <Print.h>
 
 #include "StreamString.h"
+#include "WebMonitorClient.h"
 
 namespace WebMon {
 
-class WebMonitorClient : public Print {
-  public:
-    WebMonitorClient(AsyncWebSocketClient* client);
-    virtual size_t write(uint8_t data) override;
-    virtual size_t write(const uint8_t* buffer, size_t len) override;
-    virtual int    availableForWrite() override;
-
-    template <typename T>
-    size_t println(T s) {
-        StreamString buffer;
-        buffer.println(s);
-        return write((uint8_t*)buffer.c_str(), buffer.length());
-    }
-
-  protected:
-    AsyncWebSocketClient* _client;
-};
+class WebMonitorClient;
 
 class WebMonitorClass : public Print {
   public:
