@@ -38,7 +38,8 @@ void WebMonitorClass::onConnect(ConnectHandler con_handler) {
 }
 
 void WebMonitorClass::handleWebPage(AsyncWebServerRequest* request) {
-    AsyncWebServerResponse* response = request->beginResponse_P(200, "text/html", webPage);
+    AsyncWebServerResponse* response = request->beginResponse_P(200, "text/html", webPage_html, webPage_size);
+    response->addHeader("Content-Encoding", "gzip");
     request->send(response);
 }
 
