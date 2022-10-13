@@ -22,8 +22,8 @@ const char* webPage = R"***(
             <input type="text" id="input" placeholder="Send"></input>
             <button id="send_btn" onclick="send_input()">send</button>
             <button id="clear_btn" onclick="clear_monitor_and_buffer()">clear</button>
-            <textarea id="monitor" readonly="true" placeholder="Nothing received yet"></textarea>
-            <input type="text" id="filter" placeholder="Filter"></input>
+            <textarea id="monitor" readonly="true" wrap="off" placeholder="Nothing received yet"></textarea>
+            <input type=" text" id="filter" placeholder="Filter"></input>
             <button id="toggle_timestamp_btn" onclick="toggle_timestamps()">
                 <svg version="1.1" x="0px" y="0px" viewBox="0 0 128 128" id="clock" class="clock">
                     <circle cx="64" cy="64" r="58" />
@@ -357,19 +357,24 @@ const char* webPage = R"***(
         [monitor.selectionStart, monitor.selectionEnd] = [selection.start, selection.end];
     }
 
+    function check_scroll_pos() {
+        const position = monitor.scrollTop + monitor.offsetHeight;
+        const height = monitor.scrollHeight;
+        result = (position > height - 100) ? true : false;
+        console.log('autoscroll', result);
+        return result;
+    }
+
     function process_message(message) {
         var selection = saveSelection();
         add_message_to_receive_buffer(message);
         refresh_monitor();
-        auto_scroll();
         restoreSelection(selection);
     }
 
     function auto_scroll() {
         requestAnimationFrame(() => {
-            const position = monitor.scrollTop + monitor.offsetHeight;
-            const height = monitor.scrollHeight;
-            if (position > height - 100) monitor.scrollTop = monitor.scrollHeight;
+            monitor.scrollTop = monitor.scrollHeight;
         });
     }
 
@@ -386,6 +391,8 @@ const char* webPage = R"***(
     }
 
     function refresh_monitor() {
+        do_scroll = check_scroll_pos();
+
         const filter_value = filter.value;
 
         let text = "";
@@ -403,6 +410,7 @@ const char* webPage = R"***(
 
         monitor.value += text;
         last_monitor_refresh = Date.now();
+        if (do_scroll) auto_scroll();
     }
 
     function toggle_timestamps() {
