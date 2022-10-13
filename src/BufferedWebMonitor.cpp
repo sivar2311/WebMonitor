@@ -7,6 +7,9 @@ size_t BufferedWebMonitor::write(uint8_t data) {
     yield();
     return 1;
 }
+
+size_t BufferedWebMonitor::write(const uint8_t* data, size_t size) {
+    return _buffer.write(data, size);
 }
 
 void BufferedWebMonitor::flush() {
