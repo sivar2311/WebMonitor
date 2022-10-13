@@ -61,6 +61,7 @@ void WebMonitorClass::handleWSEvent(AsyncWebSocket* server, AsyncWebSocketClient
 size_t WebMonitorClass::write(uint8_t data) {
     if (!_ws) return 0;
     _ws->textAll(&data, 1);
+    yield();
     return 1;
 }
 

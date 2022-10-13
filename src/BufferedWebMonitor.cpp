@@ -3,7 +3,10 @@
 namespace WebMon {
 
 size_t BufferedWebMonitor::write(uint8_t data) {
-    return _buffer.write(data);
+    _buffer.write(data);
+    yield();
+    return 1;
+}
 }
 
 void BufferedWebMonitor::flush() {

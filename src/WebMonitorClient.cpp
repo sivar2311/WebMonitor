@@ -7,6 +7,7 @@ WebMonitorClient::WebMonitorClient(AsyncWebSocketClient* client)
 
 size_t WebMonitorClient::write(uint8_t data) {
     _buffer.print((char)data);
+    yield();
     return 1;
 }
 
