@@ -301,7 +301,8 @@ const char* webPage = R"***(
 </style>
 
 <script>
-    const ws_url = `ws://${window.location.hostname}:${window.location.port}/wmws`;
+    const protocol = (location.protocol === 'https:' ? 'wss' : 'ws');
+    const ws_url = `${protocol}://${window.location.hostname}/wmws`;
 
     let last_monitor_refresh = 0;
     let counter = 0;
@@ -327,6 +328,10 @@ const char* webPage = R"***(
 
     socket.onmessage = (event) => {
         process_message(event.data);
+    }
+
+    socket.onerror = (err) => {
+        console.log(err);
     }
 
     function clear_monitor() {
