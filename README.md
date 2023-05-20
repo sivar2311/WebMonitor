@@ -37,7 +37,7 @@ WebMonitor can be used in the same way like `Serial`.<br>
 ```
 
 For detailed use, see examples:
-- [basic](examples/basic/main.cpp)
-- [advanced](examples/advanced/main.cpp)
-- [bidirectional](examples/bidirectional/main.cpp)
+- [basic](examples/basic/basic.ino)
+- [advanced](examples/advanced/advanced.ino)
+- [bidirectional](examples/bidirectional/bidirectional.ino)
 
